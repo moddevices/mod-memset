@@ -18,10 +18,18 @@ make CC=aarch64-linux-gnu-gcc
 
 ## Notes
 
-By forcing the tool to run on a specific CPU, and have the Dwarf IRQ 62 (ff300000.usb) also running on that CPU, we weirdly no longer have xruns.  
+By forcing the tool to run on a specific CPU, and have the Dwarf IRQ 62 (ff300000.usb) also running on that CPU, and USB Audio is activated, we weirdly no longer have xruns.  
 This can be verified with:
 
 ```sh
+# Enable USB Audio, only needed once
+touch /data/enable-usb-multi-gadget
+touch /data/enable-usb-audio-gadget
+sync && hmi-reset && reboot
+```
+
+```sh
+# Test with core #1
 echo 1 > /proc/irq/62/smp_affinity
 ./mod-memset-cpu1
 ```
@@ -29,6 +37,7 @@ echo 1 > /proc/irq/62/smp_affinity
 and using the 2nd CPU core, for good measure:
 
 ```sh
+# Test with core #2
 echo 2 > /proc/irq/62/smp_affinity
 ./mod-memset-cpu2
 ```
