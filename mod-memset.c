@@ -112,7 +112,7 @@ void* mod_memset_alternative_1(void* dstpp, int c, size_t len)
 }
 
 __attribute__((weak))
-void _dummy_symbol_to_prevent_memzero_being_optimized_away(void* pnt, size_t len)
+void _dummy_symbol_to_prevent_memset_being_optimized_away(void* pnt, size_t len)
 {
     (void)pnt;
     (void)len;
@@ -126,7 +126,7 @@ int main()
     {
        #ifdef MOD_MEMSET_REAL_MEMSET
         memset(bigmem, 0, MOD_MEMSET_SIZE);
-        _dummy_symbol_to_prevent_memzero_being_optimized_away(bigmem, MOD_MEMSET_SIZE);
+        _dummy_symbol_to_prevent_memset_being_optimized_away(bigmem, MOD_MEMSET_SIZE);
        #else
         mod_memset(bigmem, 0, MOD_MEMSET_SIZE);
        #endif
