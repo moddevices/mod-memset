@@ -21,6 +21,7 @@
 
 #include <stddef.h> /* for size_t */
 #include <stdlib.h> /* for malloc */
+#include <string.h> /* for memset */
 
 /* Type to use for aligned memory operations.
    This should normally be the biggest type supported by a single load
@@ -34,7 +35,7 @@ typedef unsigned char byte;
 #ifdef MOD_MEMSET_UNOPTIMIZED
 __attribute__((optimize(0)))
 #endif
-static void* mod_memset(void* dstpp, int c, size_t len)
+void* mod_memset(void* dstpp, int c, size_t len)
 {
     long int dstp = (long int) dstpp;
 
@@ -99,12 +100,26 @@ static void* mod_memset(void* dstpp, int c, size_t len)
     return dstpp;
 }
 
+__attribute__((weak))
+void _dummy_symbol_to_prevent_memzero_being_optimized_away(void* pnt, size_t len)
+{
+    (void)pnt;
+    (void)len;
+}
+
 int main()
 {
     void* bigmem = malloc(MOD_MEMSET_SIZE);
 
     while (1)
+    {
+       #ifdef MOD_MEMSET_REAL_MEMSET
+        memset(bigmem, 0, MOD_MEMSET_SIZE);
+        _dummy_symbol_to_prevent_memzero_being_optimized_away(bigmem, MOD_MEMSET_SIZE);
+       #else
         mod_memset(bigmem, 0, MOD_MEMSET_SIZE);
+       #endif
+    }
 
     free(bigmem);
     return 0;
