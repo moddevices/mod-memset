@@ -15,3 +15,20 @@ Project uses a simple regular Makefile, cross-compiling for Dwarf is as easy as:
 ```sh
 make CC=aarch64-linux-gnu-gcc
 ```
+
+## Notes
+
+By forcing the tool to run on a specific CPU, and have the Dwarf IRQ 62 (ff300000.usb) also running on that CPU, we weirdly no longer have xruns.  
+This can be verified with:
+
+```sh
+echo 1 > /proc/irq/62/smp_affinity
+./mod-memset-cpu1
+```
+
+and using the 2nd CPU core, for good measure:
+
+```sh
+echo 2 > /proc/irq/62/smp_affinity
+./mod-memset-cpu2
+```

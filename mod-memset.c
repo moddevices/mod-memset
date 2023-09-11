@@ -29,7 +29,7 @@ int main()
    #ifdef MOD_MEMSET_CPUSET
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
-    CPU_SET(MOD_MEMSET_CPUSET, &cpuset);
+    CPU_SET(MOD_MEMSET_CPUSET - 1, &cpuset);
     sched_setaffinity(getpid(), sizeof(cpuset), &cpuset);
    #endif
 
